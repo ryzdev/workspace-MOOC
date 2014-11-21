@@ -1,6 +1,5 @@
 package uk.ac.reading.sis05kol.mooc;
 
-//Other parts of the android libraries that we use
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,76 +7,83 @@ import android.view.MotionEvent;
 
 public class TheGame extends GameThread{
 
-	//Will store the image of a ball
-	private Bitmap mBall;
+	private Bitmap[] mBall = new Bitmap[3];
 	
-	//The X and Y position of the ball on the screen (middle of ball)
-	private float mBallX = -20;
-	private float mBallY = -20;
+	private float[] mBallX = {-20,-20,-20};
+	private float[] mBallY = {-20,-20,-20};
 	
-	//The speed (pixel/second) of the ball in direction X and Y
-	private float mBallSpeedX = 0;
-	private float mBallSpeedY = 0;
+	private float[] mBallSpeedX = {0,0,0};
+	private float[] mBallSpeedY = {0,0,0};
 
-	//This is run before anything else, so we can prepare things here
 	public TheGame(GameView gameView) {
-		//House keeping
 		super(gameView);
 		
-		//Prepare the image so we can draw it on the screen (using a canvas)
-		mBall = BitmapFactory.decodeResource
+		mBall[0] = BitmapFactory.decodeResource
 				(gameView.getContext().getResources(), 
 				R.drawable.red_balloon);
+		mBall[1] = BitmapFactory.decodeResource
+				(gameView.getContext().getResources(), 
+				R.drawable.purple_balloon);
+		mBall[2] = BitmapFactory.decodeResource
+				(gameView.getContext().getResources(), 
+				R.drawable.green_balloon);
 	}
 	
-	//This is run before a new game (also after an old game)
 	@Override
 	public void setupBeginning() {
-		//Initialise speeds
-		mBallSpeedX = 150; 
-		mBallSpeedY = 150;
 		
-		//Place the ball in the middle of the screen.
-		//mBall.Width() and mBall.getHeigh() gives us the height and width of the image of the ball
-		mBallX = mCanvasWidth / 2;
-		mBallY = mCanvasHeight / 2;
+		setInitialLocation(0, 0.5f, 0.5f);
+		setInitialLocation(1, 0.3f, 0.3f);
+		setInitialLocation(2, 0.6f, 0.6f);
+		
+		setInitialSpeed(0, 150, 150);
+		setInitialSpeed(1, -150, -150);
+		setInitialSpeed(2, 150, 150);	
+		
 	}
 
+	private void setInitialLocation(int ball, float canvasX, float canvasY) {
+		mBallX[ball] = mCanvasWidth * canvasX;
+		mBallY[ball] = mCanvasHeight * canvasY;
+	}
+
+	private void setInitialSpeed(int ball, int speedX, int speedY) {
+		mBallSpeedX[ball] = speedX; 
+		mBallSpeedY[ball] = speedY;
+	}
+	
 	@Override
 	protected void doDraw(Canvas canvas) {
-		//If there isn't a canvas to draw on do nothing
-		//It is ok not understanding what is happening here
 		if(canvas == null) return;
 		
 		super.doDraw(canvas);
 		
-		//draw the image of the ball using the X and Y of the ball
-		//drawBitmap uses top left corner as reference, we use middle of picture
-		//null means that we will use the image without any extra features (called Paint)
-		canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
+		canvas.drawBitmap(mBall[0], mBallX[0] - mBall[0].getWidth() / 2, mBallY[0] - mBall[0].getHeight() / 2, null);
+		canvas.drawBitmap(mBall[1], mBallX[1] - mBall[1].getWidth() / 2, mBallY[1] - mBall[1].getHeight() / 2, null);
+		canvas.drawBitmap(mBall[2], mBallX[2] - mBall[2].getWidth() / 2, mBallY[2] - mBall[2].getHeight() / 2, null);
 	}
 	
-	//This is run whenever the phone is touched by the user
 	@Override
 	protected void actionOnTouch(float x, float y) {
-		
-		float newXSpeed = mBallX - x;
-		float newYSpeed = mBallY - y;
+		deflectFromTouch(0,x,y);
+		deflectFromTouch(1,x,y);
+		deflectFromTouch(2,x,y);
+	}
+	
+	private void deflectFromTouch(int ball, float x, float y) {
+		float newXSpeed = mBallX[ball] - x;
+		float newYSpeed = mBallY[ball] - y;
 		float velocityOfBall = (float) Math.sqrt(newXSpeed*newXSpeed + newYSpeed*newYSpeed);
 		
 		float minChangableVelocity = 400;
 		if (velocityOfBall < minChangableVelocity){
 	        double origAngle = Math.atan2(newXSpeed, newYSpeed);
 	        float newVelocity = 1000 - velocityOfBall;
-			mBallSpeedX = (float) (Math.sin(origAngle) * newVelocity);
-	        mBallSpeedY = (float) (Math.cos(origAngle) * newVelocity);
+			mBallSpeedX[ball] = (float) (Math.sin(origAngle) * newVelocity);
+	        mBallSpeedY[ball] = (float) (Math.cos(origAngle) * newVelocity);
 		}
-		
-		//todo figure how much simpler this could be with just constant speed and/or minimum distance
 	}
-	
-	
-	//This is run whenever the phone moves around its axises 
+
 //	@Override
 //	protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
 //		//Increase/decrease the speed of the ball
@@ -85,38 +91,44 @@ public class TheGame extends GameThread{
 //		mBallSpeedY = mBallSpeedY - 1.5f * yDirection;
 //	}
 	
-	//This is run just before the game "scenario" is printed on the screen
 	@Override
 	protected void updateGame(float secondsElapsed) {
-		//Move the ball's X and Y using the speed (pixel/sec)
-		mBallX = mBallX + secondsElapsed * mBallSpeedX;
-		mBallY = mBallY + secondsElapsed * mBallSpeedY;
 		
-		bounceOffWalls();
-		gravity();
+		moveBall(0, secondsElapsed);
+		moveBall(1, secondsElapsed);
+		moveBall(2, secondsElapsed);
 		
+		gravity(0);
+		gravity(1);
+		gravity(2);
+		
+		bounceOffWalls(0);
+		bounceOffWalls(1);
+		bounceOffWalls(2);
 	}
 
-	private void bounceOffWalls() {
-		if (mBallX <= 0){
-			mBallSpeedX = Math.abs(mBallSpeedX);
-		}
-		if (mBallY <= 0){
-			mBallSpeedY = Math.abs(mBallSpeedY);
-		}
-		if (mBallX >= mCanvasWidth){
-			mBallSpeedX = -Math.abs(mBallSpeedX);
-		}
-		if (mBallY >= mCanvasHeight + 50){
-			mBallY = -50;
-			mBallSpeedY = 0;
-		}
+	private void moveBall(int ball, float secondsElapsed) {
+		mBallX[ball] = mBallX[ball] + secondsElapsed * mBallSpeedX[ball];
+		mBallY[ball] = mBallY[ball] + secondsElapsed * mBallSpeedY[ball];
+	}
 
+	private void gravity(int ball){
+		mBallSpeedY[ball] = mBallSpeedY[ball] + 20f;
 	}
 	
-	private void gravity(){
-		mBallSpeedY = mBallSpeedY + 20f;
+	private void bounceOffWalls(int ball) {
+		if (mBallX[ball] <= 0){
+			mBallSpeedX[ball] = Math.abs(mBallSpeedX[ball]);
+		}
+		if (mBallX[ball] >= mCanvasWidth){
+			mBallSpeedX[ball] = -Math.abs(mBallSpeedX[ball]);
+		}
+		if (mBallY[ball] >= mCanvasHeight + 50){
+			mBallY[ball] = -50;
+			mBallSpeedY[ball] = 0;
+		}
 	}
+	
 }
 
 // This file is part of the course "Begin Programming: Build your first mobile game" from futurelearn.com
