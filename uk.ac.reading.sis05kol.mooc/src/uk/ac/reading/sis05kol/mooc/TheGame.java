@@ -146,6 +146,18 @@ public class TheGame extends GameThread{
         }
     }
 
+//    Pythagoras and Trig collision method
+//    private void deflectFromPosition(int ball, float x, float y) {
+//        float newXSpeed = mBallX - x;
+//        float newYSpeed = mBallY - y;
+//        float velocityOfBall = (float) Math.sqrt(newXSpeed * newXSpeed + newYSpeed * newYSpeed);
+//
+//        double origAngle = Math.atan2(newXSpeed, newYSpeed);
+//        float newVelocity = 1000 - velocityOfBall;
+//        mBallSpeedX = (float) (Math.sin(origAngle) * newVelocity);
+//        mBallSpeedY = (float) (Math.cos(origAngle) * newVelocity);
+//    }
+
     private void checkSmileyCollision() {
         float distanceBetweenBallAndObject;
         distanceBetweenBallAndObject = (mSmileyBallX - mBallX) * (mSmileyBallX - mBallX) + (mSmileyBallY - mBallY) *(mSmileyBallY - mBallY);
