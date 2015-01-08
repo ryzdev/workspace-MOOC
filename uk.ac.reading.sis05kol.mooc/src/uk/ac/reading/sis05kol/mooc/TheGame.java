@@ -16,14 +16,14 @@ public class TheGame extends GameThread{
 	private float mBallSpeedY = 0;
 
 	private Bitmap mPaddle;
-	
+
 	private float mPaddleX = 0;
-	
+
 	private Bitmap mSmileyBall;
 
 	private float mSmileyBallX = -100;
 	private float mSmileyBallY = -100;
-	
+
 	private Bitmap mSadBall;
 
 	private float[] mSadBallX = {-100,-100,-100};
@@ -36,26 +36,26 @@ public class TheGame extends GameThread{
 
 		//prepare images
 		mBall = BitmapFactory.decodeResource
-				(gameView.getContext().getResources(), 
+				(gameView.getContext().getResources(),
 						R.drawable.small_red_ball);
 
 		mPaddle = BitmapFactory.decodeResource
-				(gameView.getContext().getResources(), 
+				(gameView.getContext().getResources(),
 						R.drawable.yellow_ball);
 
 		mSmileyBall =  BitmapFactory.decodeResource
-				(gameView.getContext().getResources(), 
+				(gameView.getContext().getResources(),
 						R.drawable.smiley_ball);
 
 		mSadBall =  BitmapFactory.decodeResource
-				(gameView.getContext().getResources(), 
+				(gameView.getContext().getResources(),
 						R.drawable.sad_ball);
 	}
 
 	//This is run before a new game (also after an old game)
 	@Override
 	public void setupBeginning() {
-		mBallSpeedX = mCanvasWidth / 3; 
+		mBallSpeedX = mCanvasWidth / 3;
 		mBallSpeedY = mCanvasHeight / 3;
 
 		mBallX = mCanvasWidth / 2;
@@ -68,7 +68,7 @@ public class TheGame extends GameThread{
 
 		mSadBallX[0] = mCanvasWidth / 3;
 		mSadBallY[0] = mCanvasHeight / 3;
-		
+
 		mSadBallX[1] = mCanvasWidth - mCanvasWidth / 3;
 		mSadBallY[1] = mCanvasHeight / 3;
 
@@ -86,7 +86,7 @@ public class TheGame extends GameThread{
 		canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
 		canvas.drawBitmap(mPaddle, mPaddleX - mPaddle.getWidth() / 2, mCanvasHeight - mPaddle.getHeight() / 2, null);
 		canvas.drawBitmap(mSmileyBall, mSmileyBallX - mSmileyBall.getWidth() / 2, mSmileyBallY - mSmileyBall.getHeight() / 2, null);
-		
+
 		for(int i = 0; i < mSadBallX.length; i++) {
 			canvas.drawBitmap(mSadBall, mSadBallX[i] - mSadBall.getWidth() / 2, mSadBallY[i] - mSadBall.getHeight() / 2, null);
 		}
@@ -96,17 +96,17 @@ public class TheGame extends GameThread{
 	protected void actionOnTouch(float x, float y) {
 		mPaddleX = x - mPaddle.getWidth() / 2;
 	}
-	
+
 	@Override
 	protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
 		if(mPaddleX >= 0 && mPaddleX <= mCanvasWidth) {
 			mPaddleX = mPaddleX - xDirection;
 
 			if(mPaddleX < 0) mPaddleX = 0;
-			if(mPaddleX > mCanvasWidth) mPaddleX = mCanvasWidth;			
+			if(mPaddleX > mCanvasWidth) mPaddleX = mCanvasWidth;
 		}
 	}
-	 
+
 
 	//This is run just before the game "scenario" is printed on the screen
 	@Override
@@ -131,29 +131,17 @@ public class TheGame extends GameThread{
 	}
 
     private void checkPaddleCollision() {
-        float distanceBetweenBallAndObject;//If the ball moves down on the screen perform potential paddle collision
-        if(mBallSpeedY > 0) {
-            //Get actual distance (without square root - remember?) between the mBall and the ball being checked
-            distanceBetweenBallAndObject = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) *(mCanvasHeight - mBallY);
 
-            //Check if the actual distance is lower than the allowed => collision
-            if(mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
+        if (mBallSpeedY > 0) {
+            float distanceBetweenBallAndObject = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) * (mCanvasHeight - mBallY);
 
-                //Get the present velocity (this should also be the velocity going away after the collision)
-                float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-                //Change the direction of the ball (See image) TODO need image of this
+            if (mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
+                float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
                 mBallSpeedX = mBallX - mPaddleX;
                 mBallSpeedY = mBallY - mCanvasHeight;
-
-                //Get the velocity after the collision
-                float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-                //using the fraction between the original velocity and present velocity to calculate the needed
-                //speeds in X and Y to get the original velocity but with the new angle.
+                float newVelocity = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
                 mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
                 mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
-
             }
         }
     }
