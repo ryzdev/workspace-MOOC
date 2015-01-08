@@ -16,7 +16,7 @@ public class TheGame extends GameThread {
 
     private Bitmap mPaddle;
 
-    private float mPaddleX = 0;
+    private float mPaddleY = 0;
 
     private float mMinDistanceBetweenBallAndObject = 0;
 
@@ -35,13 +35,13 @@ public class TheGame extends GameThread {
     //This is run before a new game (also after an old game)
     @Override
     public void setupBeginning() {
-        mBallSpeedX = mCanvasWidth / 3;
-        mBallSpeedY = mCanvasHeight / 3;
+        mBallSpeedX = mCanvasWidth / 2;
+        mBallSpeedY = mCanvasHeight / 5;
 
         mBallX = mCanvasWidth / 2;
         mBallY = mCanvasHeight / 2;
 
-        mPaddleX = mCanvasWidth / 2;
+        mPaddleY = mCanvasHeight / 2;
 
         mMinDistanceBetweenBallAndObject = (mPaddle.getWidth() / 2 * mPaddle.getWidth() / 2) + (mBall.getWidth() / 2 * mBall.getWidth() / 2);
     }
@@ -51,21 +51,21 @@ public class TheGame extends GameThread {
         if (canvas == null) return;
         super.doDraw(canvas);
         canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
-        canvas.drawBitmap(mPaddle, mPaddleX - mPaddle.getWidth() / 2, mCanvasHeight - mPaddle.getHeight() / 2, null);
+        canvas.drawBitmap(mPaddle, mCanvasWidth - mPaddle.getHeight() / 2, mPaddleY - mPaddle.getHeight() / 2, null);
     }
 
     @Override
     protected void actionOnTouch(float x, float y) {
-        mPaddleX = x - mPaddle.getWidth() / 2;
+        mPaddleY = y - mPaddle.getHeight() / 2;
     }
 
     @Override
     protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
-        if (mPaddleX >= 0 && mPaddleX <= mCanvasWidth) {
-            mPaddleX = mPaddleX - xDirection;
+        if (mPaddleY >= 0 && mPaddleY <= mCanvasHeight) {
+            mPaddleY = mPaddleY + xDirection - 40;
 
-            if (mPaddleX < 0) mPaddleX = 0;
-            if (mPaddleX > mCanvasWidth) mPaddleX = mCanvasWidth;
+            if (mPaddleY < 0) mPaddleY = 0;
+            if (mPaddleY > mCanvasHeight) mPaddleY = mCanvasHeight;
         }
     }
 
@@ -93,12 +93,12 @@ public class TheGame extends GameThread {
     private void checkPaddleCollision() {
 
         if (mBallSpeedY > 0) {
-            float distanceBetweenBallAndObject = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) * (mCanvasHeight - mBallY);
+            float distanceBetweenBallAndObject = (mCanvasWidth - mBallX) * (mCanvasWidth - mBallX) + (mPaddleY - mBallY) * (mPaddleY - mBallY);
 
             if (mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
                 float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
-                mBallSpeedX = mBallX - mPaddleX;
-                mBallSpeedY = mBallY - mCanvasHeight;
+                mBallSpeedX = mBallX - mCanvasWidth;
+                mBallSpeedY = mBallY - mPaddleY;
                 float newVelocity = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
                 mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
                 mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
