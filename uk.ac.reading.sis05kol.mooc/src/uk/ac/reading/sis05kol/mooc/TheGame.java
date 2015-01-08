@@ -29,7 +29,7 @@ public class TheGame extends GameThread{
 	private float[] mSadBallX = {-100,-100,-100};
 	private float[] mSadBallY = new float[3];
 
-	private float mMinDistanceBetweenRedBallAndBigBall = 0;
+	private float mMinDistanceBetweenBallAndObject = 0;
 
 	public TheGame(GameView gameView) {
 		super(gameView);
@@ -75,7 +75,7 @@ public class TheGame extends GameThread{
 		mSadBallX[2] = mCanvasWidth / 2;
 		mSadBallY[2] = mCanvasHeight / 5;
 
-		mMinDistanceBetweenRedBallAndBigBall = (mPaddle.getWidth() / 2 * mPaddle.getWidth() / 2) + (mBall.getWidth() / 2 * mBall.getWidth() / 2);
+		mMinDistanceBetweenBallAndObject = (mPaddle.getWidth() / 2 * mPaddle.getWidth() / 2) + (mBall.getWidth() / 2 * mBall.getWidth() / 2);
 	}
 
 	@Override
@@ -137,7 +137,7 @@ public class TheGame extends GameThread{
             distanceBetweenBallAndObject = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) *(mCanvasHeight - mBallY);
 
             //Check if the actual distance is lower than the allowed => collision
-            if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+            if(mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
 
                 //Get the present velocity (this should also be the velocity going away after the collision)
                 float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
@@ -163,7 +163,7 @@ public class TheGame extends GameThread{
         distanceBetweenBallAndObject = (mSmileyBallX - mBallX) * (mSmileyBallX - mBallX) + (mSmileyBallY - mBallY) *(mSmileyBallY - mBallY);
 
         //Check if the actual distance is lower than the allowed => collision
-        if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+        if(mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
 
             //Get the present velocity (this should also be the velocity going away after the collision)
             float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
@@ -195,7 +195,7 @@ public class TheGame extends GameThread{
             distanceBetweenBallAndObject = (mSadBallX[i] - mBallX) * (mSadBallX[i] - mBallX) + (mSadBallY[i] - mBallY) *(mSadBallY[i] - mBallY);
 
             //Check if the actual distance is lower than the allowed => collision
-            if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+            if(mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
 
                 //Get the present velocity (this should also be the velocity going away after the collision)
                 float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
