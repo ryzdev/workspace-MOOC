@@ -81,13 +81,10 @@ public class TheGame extends GameThread{
 	@Override
 	protected void doDraw(Canvas canvas) {
 		if(canvas == null) return;
-
 		super.doDraw(canvas);
 
 		canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
-
 		canvas.drawBitmap(mPaddle, mPaddleX - mPaddle.getWidth() / 2, mCanvasHeight - mPaddle.getHeight() / 2, null);
-		
 		canvas.drawBitmap(mSmileyBall, mSmileyBallX - mSmileyBall.getWidth() / 2, mSmileyBallY - mSmileyBall.getHeight() / 2, null);
 		
 		for(int i = 0; i < mSadBallX.length; i++) {
@@ -104,7 +101,7 @@ public class TheGame extends GameThread{
 	protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
 		if(mPaddleX >= 0 && mPaddleX <= mCanvasWidth) {
 			mPaddleX = mPaddleX - xDirection;
-			
+
 			if(mPaddleX < 0) mPaddleX = 0;
 			if(mPaddleX > mCanvasWidth) mPaddleX = mCanvasWidth;			
 		}
@@ -114,110 +111,110 @@ public class TheGame extends GameThread{
 	//This is run just before the game "scenario" is printed on the screen
 	@Override
 	protected void updateGame(float secondsElapsed) {
-		float distanceBetweenBallAndPaddle;
-		
-		//If the ball moves down on the screen perform potential paddle collision
-		if(mBallSpeedY > 0) {
-			//Get actual distance (without square root - remember?) between the mBall and the ball being checked
-			distanceBetweenBallAndPaddle = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) *(mCanvasHeight - mBallY);
-		
-			//Check if the actual distance is lower than the allowed => collision
-			if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndPaddle) {
 
-				//Get the present velocity (this should also be the velocity going away after the collision)
-				float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+        mBallX = mBallX + secondsElapsed * mBallSpeedX;
+        mBallY = mBallY + secondsElapsed * mBallSpeedY;
 
-				//Change the direction of the ball (See image) TODO need image of this
-				mBallSpeedX = mBallX - mPaddleX;
-				mBallSpeedY = mBallY - mCanvasHeight;
+        checkPaddleCollision();
+        checkSmileyCollision();
+        checkSadCollision();
 
-				//Get the velocity after the collision
-				float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-				//using the fraction between the original velocity and present velocity to calculate the needed
-				//speeds in X and Y to get the original velocity but with the new angle.
-				mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
-				mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
-
-			}
-		}
-	
-		mBallX = mBallX + secondsElapsed * mBallSpeedX;
-		mBallY = mBallY + secondsElapsed * mBallSpeedY;
-
-
-		//Check if the ball hits either the left side or the right side of the screen
-		//But only do something if the ball is moving towards that side of the screen
-		//If it does that => change the direction of the ball in the X direction
 		if((mBallX <= mBall.getWidth() / 2 & mBallSpeedX < 0) || (mBallX >= mCanvasWidth - mBall.getWidth() / 2 & mBallSpeedX > 0) ) {
 			mBallSpeedX = -mBallSpeedX;
 		}
-		
-		
-		distanceBetweenBallAndPaddle = (mSmileyBallX - mBallX) * (mSmileyBallX - mBallX) + (mSmileyBallY - mBallY) *(mSmileyBallY - mBallY);
-		
-		//Check if the actual distance is lower than the allowed => collision
-		if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndPaddle) {
-
-			//Get the present velocity (this should also be the velocity going away after the collision)
-			float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-			//Change the direction of the ball (See image) TODO need image of this
-			mBallSpeedX = mBallX - mSmileyBallX;
-			mBallSpeedY = mBallY - mSmileyBallY;
-
-			//Get the velocity after the collision
-			float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-			//using the fraction between the original velocity and present velocity to calculate the needed
-			//speeds in X and Y to get the original velocity but with the new angle.
-			mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
-			mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
-			
-			//Increase score
-			updateScore(1);
-			
-		}
-		
-		//Loop through all SadBalls
-		for(int i = 0; i < mSadBallX.length; i++) {
-			//Perform collisions (if necessary) between SadBall in position i and the red ball
-			
-			//Get actual distance (without square root - remember?) between the mBall and the ball being checked
-			distanceBetweenBallAndPaddle = (mSadBallX[i] - mBallX) * (mSadBallX[i] - mBallX) + (mSadBallY[i] - mBallY) *(mSadBallY[i] - mBallY);
-		
-			//Check if the actual distance is lower than the allowed => collision
-			if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndPaddle) {
-
-				//Get the present velocity (this should also be the velocity going away after the collision)
-				float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-				//Change the direction of the ball (See image) TODO need image of this
-				mBallSpeedX = mBallX - mSadBallX[i];
-				mBallSpeedY = mBallY - mSadBallY[i];
-
-				//Get the velocity after the collision
-				float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
-
-				//using the fraction between the original velocity and present velocity to calculate the needed
-				//speeds in X and Y to get the original velocity but with the new angle.
-				mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
-				mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
-			}
-
-		}
-
-		//If the ball goes out of the top of the screen and moves towards the top of the screen =>
-		//change the direction of the ball in the Y direction and add a point
-		if(mBallY <= mBall.getWidth() / 2 && mBallSpeedY < 0) {
-			mBallSpeedY = -mBallSpeedY;
-		}
-
-		//If the ball goes out of the bottom of the screen => lose the game
+        if(mBallY <= mBall.getWidth() / 2 && mBallSpeedY < 0) {
+            mBallSpeedY = -mBallSpeedY;
+        }
 		if(mBallY >= mCanvasHeight) {
 			setState(GameThread.STATE_LOSE);
 		}
 	}
+
+    private void checkPaddleCollision() {
+        float distanceBetweenBallAndObject;//If the ball moves down on the screen perform potential paddle collision
+        if(mBallSpeedY > 0) {
+            //Get actual distance (without square root - remember?) between the mBall and the ball being checked
+            distanceBetweenBallAndObject = (mPaddleX - mBallX) * (mPaddleX - mBallX) + (mCanvasHeight - mBallY) *(mCanvasHeight - mBallY);
+
+            //Check if the actual distance is lower than the allowed => collision
+            if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+
+                //Get the present velocity (this should also be the velocity going away after the collision)
+                float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+                //Change the direction of the ball (See image) TODO need image of this
+                mBallSpeedX = mBallX - mPaddleX;
+                mBallSpeedY = mBallY - mCanvasHeight;
+
+                //Get the velocity after the collision
+                float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+                //using the fraction between the original velocity and present velocity to calculate the needed
+                //speeds in X and Y to get the original velocity but with the new angle.
+                mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
+                mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
+
+            }
+        }
+    }
+
+    private void checkSmileyCollision() {
+        float distanceBetweenBallAndObject;
+        distanceBetweenBallAndObject = (mSmileyBallX - mBallX) * (mSmileyBallX - mBallX) + (mSmileyBallY - mBallY) *(mSmileyBallY - mBallY);
+
+        //Check if the actual distance is lower than the allowed => collision
+        if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+
+            //Get the present velocity (this should also be the velocity going away after the collision)
+            float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+            //Change the direction of the ball (See image) TODO need image of this
+            mBallSpeedX = mBallX - mSmileyBallX;
+            mBallSpeedY = mBallY - mSmileyBallY;
+
+            //Get the velocity after the collision
+            float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+            //using the fraction between the original velocity and present velocity to calculate the needed
+            //speeds in X and Y to get the original velocity but with the new angle.
+            mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
+            mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
+
+            //Increase score
+            updateScore(1);
+
+        }
+    }
+
+    private void checkSadCollision() {
+        float distanceBetweenBallAndObject;//Loop through all SadBalls
+        for(int i = 0; i < mSadBallX.length; i++) {
+            //Perform collisions (if necessary) between SadBall in position i and the red ball
+
+            //Get actual distance (without square root - remember?) between the mBall and the ball being checked
+            distanceBetweenBallAndObject = (mSadBallX[i] - mBallX) * (mSadBallX[i] - mBallX) + (mSadBallY[i] - mBallY) *(mSadBallY[i] - mBallY);
+
+            //Check if the actual distance is lower than the allowed => collision
+            if(mMinDistanceBetweenRedBallAndBigBall >= distanceBetweenBallAndObject) {
+
+                //Get the present velocity (this should also be the velocity going away after the collision)
+                float velocityOfBall = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+                //Change the direction of the ball (See image) TODO need image of this
+                mBallSpeedX = mBallX - mSadBallX[i];
+                mBallSpeedY = mBallY - mSadBallY[i];
+
+                //Get the velocity after the collision
+                float newVelocity = (float) Math.sqrt(mBallSpeedX*mBallSpeedX + mBallSpeedY*mBallSpeedY);
+
+                //using the fraction between the original velocity and present velocity to calculate the needed
+                //speeds in X and Y to get the original velocity but with the new angle.
+                mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
+                mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
+            }
+
+        }
+    }
 }
 
 // This file is part of the course "Begin Programming: Build your first mobile game" from futurelearn.com
