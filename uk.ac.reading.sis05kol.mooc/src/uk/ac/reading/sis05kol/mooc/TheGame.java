@@ -78,21 +78,26 @@ public class TheGame extends GameThread {
         mBallY = mBallY + secondsElapsed * mBallSpeedY;
 
         checkPaddleCollision();
+        bounceSides();
+    }
 
-        if ((mBallX <= mBall.getWidth() / 2 & mBallSpeedX < 0) || (mBallX >= mCanvasWidth - mBall.getWidth() / 2 & mBallSpeedX > 0)) {
+    private void bounceSides() {
+        if (mBallX <= mBall.getWidth() / 2 & mBallSpeedX < 0) {  //left
+            updateScore(1);
             mBallSpeedX = -mBallSpeedX;
         }
-        if (mBallY <= mBall.getWidth() / 2 && mBallSpeedY < 0) {
-            mBallSpeedY = -mBallSpeedY;
+        if (mBallX >= mCanvasWidth - mBall.getWidth() / 2 & mBallSpeedX > 0) { //right
+            updateScore(-1);
+            mBallSpeedX = -mBallSpeedX;
         }
-        if (mBallY >= mCanvasHeight) {
-            setState(GameThread.STATE_LOSE);
+        if (mBallY <= mBall.getWidth() / 2 && mBallSpeedY < 0 || mBallY >= mCanvasHeight - mBall.getWidth() / 2 && mBallSpeedY > 0) { //top and bottom
+            mBallSpeedY = -mBallSpeedY;
         }
     }
 
     private void checkPaddleCollision() {
-
-        if (mBallSpeedY > 0) {
+        if (mBallSpeedX
+                > 0) {
             float distanceBetweenBallAndObject = (mCanvasWidth - mBallX) * (mCanvasWidth - mBallX) + (mPaddleY - mBallY) * (mPaddleY - mBallY);
 
             if (mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
