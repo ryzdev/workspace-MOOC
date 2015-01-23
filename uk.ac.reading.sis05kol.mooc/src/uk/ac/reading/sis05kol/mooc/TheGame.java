@@ -79,6 +79,7 @@ public class TheGame extends GameThread {
 
         checkPaddleCollision();
         bounceSides();
+        checkWinner();
     }
 
     private void bounceSides() {
@@ -108,6 +109,16 @@ public class TheGame extends GameThread {
                 mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
                 mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
             }
+        }
+    }
+
+    private void checkWinner() {
+        if (score == 3) {
+            setState(GameThread.STATE_WIN);
+        }
+
+        if (score == -3) {
+            setState(GameThread.STATE_LOSE);
         }
     }
 }

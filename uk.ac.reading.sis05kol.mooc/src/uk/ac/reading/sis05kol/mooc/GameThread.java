@@ -64,7 +64,7 @@ public abstract class GameThread extends Thread {
 		
 		mBackgroundImage = BitmapFactory.decodeResource
 							(gameView.getContext().getResources(), 
-							R.drawable.background);
+							R.drawable.bkpngyellow);
 	}
 	
 	/*
