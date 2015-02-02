@@ -16,7 +16,8 @@ public class TheGame extends GameThread {
 
     private Bitmap mPaddle;
 
-    private float mPaddleY = 0;
+    private float playerY = 0;
+    private float opponentY = 0;
 
     public TheGame(GameView gameView) {
         super(gameView);
@@ -39,7 +40,8 @@ public class TheGame extends GameThread {
         mBallX = mCanvasWidth / 2;
         mBallY = mCanvasHeight / 2;
 
-        mPaddleY = mCanvasHeight / 2;
+        playerY = mCanvasHeight / 2;
+        opponentY = mCanvasHeight / 2;
     }
 
     @Override
@@ -47,24 +49,21 @@ public class TheGame extends GameThread {
         if (canvas == null) return;
         super.doDraw(canvas);
         canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
-        canvas.drawBitmap(mPaddle, mCanvasWidth - mPaddle.getWidth() * 2, mPaddleY - mPaddle.getHeight() / 2, null);
+        canvas.drawBitmap(mPaddle, mCanvasWidth - mPaddle.getWidth() * 2, playerY - mPaddle.getHeight() / 2, null);
+        canvas.drawBitmap(mPaddle, mPaddle.getWidth() * 2, opponentY - mPaddle.getHeight() / 2, null);
     }
 
-    @Override
-    protected void actionOnTouch(float x, float y) {
-        mPaddleY = y - mPaddle.getHeight() / 2;
-    }
+//    @Override
+//    protected void actionOnTouch(float x, float y) {
+//        playerY = y - mPaddle.getHeight() / 2;
+//    }
 
     @Override
     protected void actionWhenPhoneMoved(float xDirection, float yDirection, float zDirection) {
-        if (mPaddleY >= 0 && mPaddleY <= mCanvasHeight) {
-            mPaddleY = mPaddleY + xDirection - 40;
-
-            if (mPaddleY < mPaddle.getHeight() / 2) mPaddleY = mPaddle.getHeight() / 2;
-            if (mPaddleY > mCanvasHeight - mPaddle.getHeight() / 2) mPaddleY = mCanvasHeight - mPaddle.getHeight() / 2;
+        if (playerY >= 0 && playerY <= mCanvasHeight) {
+            playerY = playerY + xDirection - 40;
         }
     }
-
 
     //This is run just before the game "scenario" is printed on the screen
     @Override
@@ -72,29 +71,30 @@ public class TheGame extends GameThread {
         mBallX = mBallX + secondsElapsed * mBallSpeedX;
         mBallY = mBallY + secondsElapsed * mBallSpeedY;
 
-        checkPlayerCollision();
+        playerLimits();
+        opponentLimits();
         bounceSides();
+        checkPlayerCollision();
+        checkOpponentCollision();
         checkWinner();
     }
 
-    private void checkPlayerCollision() {
-        if (mBallSpeedX > 0                                          // moving towards player
-                && mBallX > mCanvasWidth - mPaddle.getWidth() * 2    // x
-                && mBallY >= mPaddleY - mPaddle.getHeight() / 2      // y bottom
-                && mBallY <= mPaddleY + mPaddle.getHeight() / 2) {   // y top
-            collision(mCanvasWidth + 30, mPaddleY);
+    private void playerLimits() {
+        if (playerY < mPaddle.getHeight() / 2) {
+            playerY = mPaddle.getHeight() / 2;
+        } else if (playerY > mCanvasHeight - mPaddle.getHeight() / 2){
+            playerY = mCanvasHeight - mPaddle.getHeight() / 2;
         }
     }
 
-    private void collision(int x, float y) {
-                float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
-                mBallSpeedX = mBallX - x;
-                mBallSpeedY = mBallY - y;
-                float newVelocity = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
-                mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
-                mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
-    }
 
+    private void opponentLimits() {
+        if (playerY < mPaddle.getHeight() / 2) {
+            playerY = mPaddle.getHeight() / 2;
+        } else if (playerY > mCanvasHeight - mPaddle.getHeight() / 2){
+            playerY = mCanvasHeight - mPaddle.getHeight() / 2;
+        }
+    }
     private void bounceSides() {
         if (mBallX <= mBall.getWidth() / 2 & mBallSpeedX < 0) {  //left
             updateScore(1);
@@ -107,6 +107,34 @@ public class TheGame extends GameThread {
         if (mBallY <= mBall.getWidth() / 2 && mBallSpeedY < 0 || mBallY >= mCanvasHeight - mBall.getWidth() / 2 && mBallSpeedY > 0) { //top and bottom
             mBallSpeedY = -mBallSpeedY;
         }
+    }
+
+    private void checkPlayerCollision() {
+        if (mBallSpeedX > 0                                          // moving towards player
+                && mBallX > mCanvasWidth - mPaddle.getWidth() * 2    // x
+                && mBallY >= playerY - mPaddle.getHeight() / 2      // y bottom
+                && mBallY <= playerY + mPaddle.getHeight() / 2) {   // y top
+//            mBallSpeedX = -mBallSpeedX;
+            collision(mCanvasWidth + 30, playerY);
+        }
+    }
+
+    private void checkOpponentCollision() {
+        if (mBallSpeedX < 0                                          // moving towards opponent
+                && mBallX < mPaddle.getWidth() * 2                   // x
+                && mBallY >= opponentY - mPaddle.getHeight() / 2      // y bottom
+                && mBallY <= opponentY + mPaddle.getHeight() / 2) {   // y top
+            collision(- 30, opponentY);
+        }
+    }
+
+    private void collision(int x, float y) {
+                float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
+                mBallSpeedX = mBallX - x;
+                mBallSpeedY = mBallY - y;
+                float newVelocity = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
+                mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
+                mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
     }
 
     private void checkWinner() {
