@@ -97,11 +97,8 @@ public class TheGame extends GameThread {
     }
 
     private void checkPaddleCollision() {
-        if (mBallSpeedX
-                > 0) {
-            float distanceBetweenBallAndObject = (mCanvasWidth - mBallX) * (mCanvasWidth - mBallX) + (mPaddleY - mBallY) * (mPaddleY - mBallY);
-
-            if (mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndObject) {
+        if (mBallSpeedX > 0) {
+            if (paddleCollision()) {
                 float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
                 mBallSpeedX = mBallX - mCanvasWidth;
                 mBallSpeedY = mBallY - mPaddleY;
@@ -110,6 +107,11 @@ public class TheGame extends GameThread {
                 mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
             }
         }
+    }
+
+    private boolean paddleCollision() {
+        float distanceBetweenBallAndPaddle = (mCanvasWidth - mBallX) * (mCanvasWidth - mBallX) + (mPaddleY - mBallY) * (mPaddleY - mBallY);
+        return mMinDistanceBetweenBallAndObject >= distanceBetweenBallAndPaddle;
     }
 
     private void checkWinner() {
