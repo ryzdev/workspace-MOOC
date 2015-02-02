@@ -25,11 +25,11 @@ public class TheGame extends GameThread {
 
         mBall = BitmapFactory.decodeResource
                 (gameView.getContext().getResources(),
-                        R.drawable.small_red_ball);
+                        R.drawable.white_ball);
 
         mPaddle = BitmapFactory.decodeResource
                 (gameView.getContext().getResources(),
-                        R.drawable.yellow_ball);
+                        R.drawable.paddle);
     }
 
     //This is run before a new game (also after an old game)
@@ -43,7 +43,7 @@ public class TheGame extends GameThread {
 
         mPaddleY = mCanvasHeight / 2;
 
-        mMinDistanceBetweenBallAndObject = (mPaddle.getWidth() / 2 * mPaddle.getWidth() / 2) + (mBall.getWidth() / 2 * mBall.getWidth() / 2);
+//        mMinDistanceBetweenBallAndObject = (mPaddle.getWidth() / 2 * mPaddle.getWidth() / 2) + (mBall.getWidth() / 2 * mBall.getWidth() / 2);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TheGame extends GameThread {
         if (canvas == null) return;
         super.doDraw(canvas);
         canvas.drawBitmap(mBall, mBallX - mBall.getWidth() / 2, mBallY - mBall.getHeight() / 2, null);
-        canvas.drawBitmap(mPaddle, mCanvasWidth - mPaddle.getHeight() / 2, mPaddleY - mPaddle.getHeight() / 2, null);
+        canvas.drawBitmap(mPaddle, mCanvasWidth - mPaddle.getWidth() * 2, mPaddleY - mPaddle.getHeight() / 2, null);
     }
 
     @Override
@@ -64,8 +64,8 @@ public class TheGame extends GameThread {
         if (mPaddleY >= 0 && mPaddleY <= mCanvasHeight) {
             mPaddleY = mPaddleY + xDirection - 40;
 
-            if (mPaddleY < 0) mPaddleY = 0;
-            if (mPaddleY > mCanvasHeight) mPaddleY = mCanvasHeight;
+            if (mPaddleY < mPaddle.getHeight() / 2) mPaddleY = mPaddle.getHeight() / 2;
+            if (mPaddleY > mCanvasHeight - mPaddle.getHeight() / 2) mPaddleY = mCanvasHeight - mPaddle.getHeight() / 2;
         }
     }
 
@@ -77,9 +77,19 @@ public class TheGame extends GameThread {
         mBallX = mBallX + secondsElapsed * mBallSpeedX;
         mBallY = mBallY + secondsElapsed * mBallSpeedY;
 
-        checkPaddleCollision();
+//        checkPaddleCollision();
+        basicCollision();
         bounceSides();
         checkWinner();
+    }
+
+    private void basicCollision() {
+        if(mBallX > mCanvasWidth - mPaddle.getWidth() * 2
+                && mBallY >= mPaddleY - mPaddle.getHeight() / 2
+                && mBallY <= mPaddleY + mPaddle.getHeight() / 2){
+            mBallSpeedX = -mBallSpeedX;
+
+        }
     }
 
     private void bounceSides() {
