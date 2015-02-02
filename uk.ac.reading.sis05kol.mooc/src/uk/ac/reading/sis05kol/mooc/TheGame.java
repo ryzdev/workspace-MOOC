@@ -77,18 +77,18 @@ public class TheGame extends GameThread {
         mBallX = mBallX + secondsElapsed * mBallSpeedX;
         mBallY = mBallY + secondsElapsed * mBallSpeedY;
 
-//        checkPaddleCollision();
+//        checkCollision(mCanvasWidth, mPaddleY);
         basicCollision();
         bounceSides();
         checkWinner();
     }
 
     private void basicCollision() {
-        if(mBallX > mCanvasWidth - mPaddle.getWidth() * 2
-                && mBallY >= mPaddleY - mPaddle.getHeight() / 2
-                && mBallY <= mPaddleY + mPaddle.getHeight() / 2){
+        if (mBallSpeedX > 0                                          // moving towards player
+                && mBallX > mCanvasWidth - mPaddle.getWidth() * 2   // x
+                && mBallY >= mPaddleY - mPaddle.getHeight() / 2     // y bottom
+                && mBallY <= mPaddleY + mPaddle.getHeight() / 2) {   // y top
             mBallSpeedX = -mBallSpeedX;
-
         }
     }
 
@@ -106,12 +106,12 @@ public class TheGame extends GameThread {
         }
     }
 
-    private void checkPaddleCollision() {
+    private void checkCollision(int x, float y) {
         if (mBallSpeedX > 0) {
             if (paddleCollision()) {
                 float velocityOfBall = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
-                mBallSpeedX = mBallX - mCanvasWidth;
-                mBallSpeedY = mBallY - mPaddleY;
+                mBallSpeedX = mBallX - x;
+                mBallSpeedY = mBallY - y;
                 float newVelocity = (float) Math.sqrt(mBallSpeedX * mBallSpeedX + mBallSpeedY * mBallSpeedY);
                 mBallSpeedX = mBallSpeedX * velocityOfBall / newVelocity;
                 mBallSpeedY = mBallSpeedY * velocityOfBall / newVelocity;
