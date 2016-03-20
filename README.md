@@ -1,19 +1,6 @@
-workspace-MOOC
-==============
+A.I. Pong
+=======
 
-Source code for the Begin programming: build your first mobile game course from the University of Reading
+Based on a fork of the source code from FutureLearn course "Begin programming: build your first mobile game" from the University of Reading.
 
-
-These files are part of the course "Begin Programming: Build your first mobile game" from futurelearn.com
-Copyright: University of Reading and Karsten Lundqvist
-It is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-It is is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-TEST CHANGES!!!
+Modified the original Breakout-style block breaking game to turn it into a Pong clone with AI opponent, with improved physics and retro graphics. A work in progress, as yet still not finished.
