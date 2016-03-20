@@ -1,19 +1,8 @@
-workspace-MOOC
+Ballon-game android demo
 ==============
 
-Source code for the Begin programming: build your first mobile game course from the University of Reading
+Based on fork of source code for the Begin programming: build your first mobile game course from the University of Reading
 
+I modified the original code to add physics, graphics and new sprites into the game, to re-imagine it as a ballon bouncing game. The basic physics are in, but still to add a scoring mechanism.
 
-These files are part of the course "Begin Programming: Build your first mobile game" from futurelearn.com
-Copyright: University of Reading and Karsten Lundqvist
-It is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-It is is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-TEST CHANGES!!!
+The prebuilt .apk to install it on your Android phone can be found [here](http://www.ryzdev.uk/resources/BalloonGame.apk)
