@@ -27,6 +27,12 @@ local.properties
 # PDT-specific
 .buildpath
 
+#ryz added
+.idea/
+*.iml
+gen/
+out/
+*.properties
 
 #################
 ## Visual Studio
