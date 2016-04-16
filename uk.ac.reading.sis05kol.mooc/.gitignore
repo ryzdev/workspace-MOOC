@@ -1,6 +1,0 @@
-.idea/
-*.iml
-gen/uk/ac/reading/sis05kol/mooc/Manifest.java
-gen/uk/ac/reading/sis05kol/mooc/BuildConfig.java
-out/
-project.properties
